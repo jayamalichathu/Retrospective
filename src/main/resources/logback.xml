@@ -1,0 +1,35 @@
+<configuration>
+        <property name="LOG-PATTERN" value = " %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n"/>
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                ${LOG-PATTERN}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>
+            ./logs/retrospective.log
+        </file>
+        <encoder>
+            <pattern>
+                ${LOG-PATTERN}
+            </pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ./logs/archives/retrospective-%d{yyyy-MM-dd}-%i.log.zip
+            </fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ROLLING-FILE"/>
+    </root>
+
+</configuration>
