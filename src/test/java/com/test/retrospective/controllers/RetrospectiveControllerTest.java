@@ -38,7 +38,7 @@ public class RetrospectiveControllerTest {
     RetrospectiveServiceImpl retrospectiveService;
 
     @Test
-    void shouldReturnJsonReasponse_WhenAcceptTypeIsJson_GetAllRetrospectives() throws Exception {
+    void shouldReturnJsonResponse_WhenAcceptTypeIsJson_GetAllRetrospectives() throws Exception {
         PageData retrospectives = new PageData(1,1,0,5,listOf(
                 new Retrospective("Ret_122", new Date(), List.of("John", "Malan") )));
         when(retrospectiveService.retrieveAllRetrospectives(any())).thenReturn(retrospectives);

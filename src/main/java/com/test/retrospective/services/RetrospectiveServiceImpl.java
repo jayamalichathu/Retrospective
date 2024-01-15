@@ -13,12 +13,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Implementation of the RetrospectiveService interface.
+ */
 @Service
 public class RetrospectiveServiceImpl implements RetrospectiveService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RetrospectiveServiceImpl.class);
     private final RetrospectiveRepository retrospectiveRepository;
     private final FeedbackRepository feedbackRepository;
+
     RetrospectiveServiceImpl(RetrospectiveRepository retrospectiveRepository, FeedbackRepository feedbackRepository) {
         this.retrospectiveRepository = retrospectiveRepository;
         this.feedbackRepository = feedbackRepository;
@@ -43,7 +47,6 @@ public class RetrospectiveServiceImpl implements RetrospectiveService {
             LOGGER.error(errorMessage);
             throw new DuplicateRetrospectiveException("Retrospective with name " + retrospective.getName() + " already exists");
         }
-
     }
 
     @Override
@@ -56,7 +59,6 @@ public class RetrospectiveServiceImpl implements RetrospectiveService {
             LOGGER.error("An error occurred while finding a retrospective", exception);
             throw new DatasourceException("An error occurred while finding a retrospective", exception);
         }
-
     }
 
     public Retrospective addFeedbackItem(String retrospectiveName, Feedback feedback) {
@@ -83,7 +85,6 @@ public class RetrospectiveServiceImpl implements RetrospectiveService {
             LOGGER.warn("Retrospective with name {} not found", retrospectiveName);
             throw new RetrospectiveNotFoundException("Retrospective with name " + retrospectiveName + " not found");
         }
-
     }
 
     @Override
@@ -123,6 +124,21 @@ public class RetrospectiveServiceImpl implements RetrospectiveService {
         }
     }
 
+    /**
+     * Converts a Page of Retrospective entities into a PageData object.
+     *
+     * @param retrospectivesPage Page of Retrospective entities.
+     * @return PageData containing information about the page.
+     */
+    private PageData makePageData( Page<Retrospective> retrospectivesPage) {
+        return new PageData(
+                retrospectivesPage.getTotalPages(),
+                retrospectivesPage.getTotalElements(),
+                retrospectivesPage.getNumber(),
+                retrospectivesPage.getSize(),
+                retrospectivesPage.getContent() );
+    }
+
     @Override
     public PageData retrieveAllRetrospectives(PageRequest pageRequest) {
         try {
@@ -140,16 +156,6 @@ public class RetrospectiveServiceImpl implements RetrospectiveService {
         }
     }
 
-    private PageData makePageData( Page<Retrospective> retrospectivesPage) {
-        return new PageData(
-                retrospectivesPage.getTotalPages(),
-                retrospectivesPage.getTotalElements(),
-                retrospectivesPage.getNumber(),
-                retrospectivesPage.getSize(),
-                retrospectivesPage.getContent() );
-
-    }
-
     @Override
     public PageData filterRetrospectiveByDate(Date date, PageRequest pageRequest) {
         try {
@@ -159,13 +165,8 @@ public class RetrospectiveServiceImpl implements RetrospectiveService {
             return pageData;
         } catch (Exception exception) {
             LOGGER.error("An error occurred while filtering retrospectives by date", exception);
-            throw new DatasourceException("An error occurred while retrieving retrospectives", exception); // Re-throw the exception after logging
+            throw new DatasourceException("An error occurred while filtering retrospectives by date", exception); // Re-throw the exception after logging
         }
     }
-
-//    private String generateUniqueName() {
-//        // Implement logic to generate a unique name
-//        return "Retrospective_" + System.currentTimeMillis();
-//    }
 
 }

@@ -14,16 +14,29 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+/**
+ * Controller class for handling retrospective-related endpoints.
+ */
 @RestController
 @RequestMapping("/retrospectives")
 public class RetrospectiveController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RetrospectiveController.class);
     private final RetrospectiveServiceImpl retrospectiveService;
 
+    /**
+     * Constructor for RetrospectiveController.
+     * @param retrospectiveService Retrospective service for handling business logic.
+     */
     public RetrospectiveController(RetrospectiveServiceImpl retrospectiveService) {
         this.retrospectiveService = retrospectiveService;
     }
 
+    /**
+     * Endpoint to retrieve all retrospectives with pagination.
+     * @param currentPage Current page number for pagination.
+     * @param size Number of items per page.
+     * @return PageData containing retrospectives.
+     */
     @GetMapping
     public PageData getAllRetrospectives(@RequestParam(defaultValue = "0") int currentPage,
                                          @RequestParam(defaultValue = "10") int size) {
@@ -32,6 +45,14 @@ public class RetrospectiveController {
         return retrospectiveService.retrieveAllRetrospectives(pageRequest);
     }
 
+
+    /**
+     * Endpoint to search retrospectives by date with pagination.
+     * @param date Date for filtering retrospectives.
+     * @param currentPage Current page number for pagination.
+     * @param size Number of items per page.
+     * @return PageData containing filtered retrospectives.
+     */
     @GetMapping("/searchByDate")
     public PageData searchRetrospectivesByDate(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
                                                 @RequestParam(defaultValue = "0") int currentPage,
@@ -41,6 +62,11 @@ public class RetrospectiveController {
         return retrospectiveService.filterRetrospectiveByDate(date, pageRequest);
     }
 
+    /**
+     * Endpoint to create a new retrospective.
+     * @param retrospective Retrospective object to be created.
+     * @return ResponseEntity indicating the success of the operation.
+     */
     @PostMapping("/create")
     public ResponseEntity<String> createRetrospective(@RequestBody Retrospective retrospective) {
         LOGGER.info("Create a retrospective");
@@ -48,6 +74,12 @@ public class RetrospectiveController {
         return new ResponseEntity<>("Retrospective created successfully", HttpStatus.CREATED);
     }
 
+    /**
+     * Endpoint to add feedback to a specific retrospective.
+     * @param retrospectiveName Name of the retrospective.
+     * @param feedback Feedback object to be added.
+     * @return ResponseEntity indicating the success of the operation.
+     */
     @PostMapping("/{retrospectiveName}/addFeedback")
     public ResponseEntity<String> addFeedbackItemToRetrospective(@PathVariable String retrospectiveName
             , @RequestBody Feedback feedback) {
@@ -56,6 +88,12 @@ public class RetrospectiveController {
         return new ResponseEntity<>("Feedback item added successfully", HttpStatus.OK);
     }
 
+    /**
+     * Endpoint to update feedback of a specific retrospective.
+     * @param retrospectiveName Name of the retrospective.
+     * @param feedback Feedback object to be updated.
+     * @return ResponseEntity indicating the success of the operation.
+     */
     @PutMapping("/{retrospectiveName}/updateFeedbackItem")
     public ResponseEntity<String> updateFeedbackItem(@PathVariable String retrospectiveName, @RequestBody Feedback feedback) {
         LOGGER.info("Update a feedback of the given retrospective");
